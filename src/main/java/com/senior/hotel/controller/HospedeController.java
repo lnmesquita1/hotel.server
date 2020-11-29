@@ -50,6 +50,33 @@ public class HospedeController {
 		Response<List<Map<String, Object>>> response = new Response<List<Map<String, Object>>>();
 		List<Hospede> guests = hospedeRepository.findGuestsWithCheckInAndLeftHotel(LocalDate.now());
 		
+		List<Map<String, Object>> retorno = this.createValueGuests(guests);
+		
+		response.setData(retorno);
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping(value="all")
+	public ResponseEntity<Response<List<Map<String, Object>>>> findAll() {
+		Response<List<Map<String, Object>>> response = new Response<List<Map<String, Object>>>();
+		List<Hospede> guests = hospedeRepository.findAll();
+		List<Map<String, Object>> retorno = this.createValueGuests(guests);
+		response.setData(retorno);
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping(value="hosted")
+	public ResponseEntity<Response<List<Map<String, Object>>>> findGuestsHosted() {
+		Response<List<Map<String, Object>>> response = new Response<List<Map<String, Object>>>();
+		List<Hospede> guests = hospedeRepository.findGuestsHosted(LocalDate.now());
+		
+		List<Map<String, Object>> retorno = this.createValueGuests(guests);
+		
+		response.setData(retorno);
+		return ResponseEntity.ok(response);
+	}
+	
+	private List<Map<String, Object>> createValueGuests(List<Hospede> guests) {
 		List<Map<String, Object>> retorno = new ArrayList<>();
 		guests.stream().forEach(guest -> {
 			Map<String, Object> item = new HashMap<String, Object>();
@@ -64,16 +91,6 @@ public class HospedeController {
 			
 			retorno.add(item);
 		});
-		
-		response.setData(retorno);
-		return ResponseEntity.ok(response);
-	}
-	
-	@GetMapping(value="hosted")
-	public ResponseEntity<Response<List<Hospede>>> findGuestsHosted() {
-		Response<List<Hospede>> response = new Response<List<Hospede>>();
-		List<Hospede> guests = hospedeRepository.findGuestsHosted(LocalDate.now());
-		response.setData(guests);
-		return ResponseEntity.ok(response);
+		return retorno;
 	}
 }
