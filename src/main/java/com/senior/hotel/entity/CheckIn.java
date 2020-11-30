@@ -1,6 +1,6 @@
 package com.senior.hotel.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,9 +18,9 @@ public class CheckIn {
 	@OneToOne
 	private Hospede hospede;
 	
-	private LocalDate dataEntrada;
+	private LocalDateTime dataEntrada;
 	
-	private LocalDate dataSaida;
+	private LocalDateTime dataSaida;
 	
 	private boolean adicionalVeiculo;
 
@@ -40,19 +40,19 @@ public class CheckIn {
 		this.hospede = hospede;
 	}
 
-	public LocalDate getDataEntrada() {
+	public LocalDateTime getDataEntrada() {
 		return dataEntrada;
 	}
 
-	public void setDataEntrada(LocalDate dataEntrada) {
+	public void setDataEntrada(LocalDateTime dataEntrada) {
 		this.dataEntrada = dataEntrada;
 	}
 
-	public LocalDate getDataSaida() {
+	public LocalDateTime getDataSaida() {
 		return dataSaida;
 	}
 
-	public void setDataSaida(LocalDate dataSaida) {
+	public void setDataSaida(LocalDateTime dataSaida) {
 		this.dataSaida = dataSaida;
 	}
 

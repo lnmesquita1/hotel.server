@@ -1,6 +1,6 @@
 package com.senior.hotel.controller;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.senior.hotel.entity.Hospede;
 import com.senior.hotel.entity.HospedeValor;
-import com.senior.hotel.repository.HospedeRepository;
-import com.senior.hotel.repository.HospedeValorRepository;
 import com.senior.hotel.response.Response;
+import com.senior.hotel.service.HospedeService;
+import com.senior.hotel.service.HospedeValorService;
 
 @RestController
 @RequestMapping("/api/hospede")
@@ -27,16 +27,16 @@ import com.senior.hotel.response.Response;
 public class HospedeController {
 	
 	@Autowired
-	private HospedeRepository hospedeRepository;
+	private HospedeService hospedeService;
 	
 	@Autowired
-	private HospedeValorRepository hospedeValorRepository;
+	private HospedeValorService hospedeValorService;
 
 	@PostMapping()
     public ResponseEntity<Response<Hospede>> createHospede(@RequestBody Hospede hospede) {
 		Response<Hospede> response = new Response<Hospede>();
 		try {
-			Hospede persisted = hospedeRepository.save(hospede);
+			Hospede persisted = hospedeService.save(hospede);
 			response.setData(persisted);
 		} catch (Exception e) {
 			response.getErrors().add(e.getMessage());
@@ -48,7 +48,7 @@ public class HospedeController {
 	@GetMapping(value="left")
 	public ResponseEntity<Response<List<Map<String, Object>>>> findGuestsWithCheckInAndLeftHotel() {
 		Response<List<Map<String, Object>>> response = new Response<List<Map<String, Object>>>();
-		List<Hospede> guests = hospedeRepository.findGuestsWithCheckInAndLeftHotel(LocalDate.now());
+		List<Hospede> guests = hospedeService.findGuestsWithCheckInAndLeftHotel(LocalDateTime.now());
 		
 		List<Map<String, Object>> retorno = this.createValueGuests(guests);
 		
@@ -59,7 +59,7 @@ public class HospedeController {
 	@GetMapping(value="all")
 	public ResponseEntity<Response<List<Map<String, Object>>>> findAll() {
 		Response<List<Map<String, Object>>> response = new Response<List<Map<String, Object>>>();
-		List<Hospede> guests = hospedeRepository.findAll();
+		List<Hospede> guests = hospedeService.findAll();
 		List<Map<String, Object>> retorno = this.createValueGuests(guests);
 		response.setData(retorno);
 		return ResponseEntity.ok(response);
@@ -68,7 +68,7 @@ public class HospedeController {
 	@GetMapping(value="hosted")
 	public ResponseEntity<Response<List<Map<String, Object>>>> findGuestsHosted() {
 		Response<List<Map<String, Object>>> response = new Response<List<Map<String, Object>>>();
-		List<Hospede> guests = hospedeRepository.findGuestsHosted(LocalDate.now());
+		List<Hospede> guests = hospedeService.findGuestsHosted(LocalDateTime.now());
 		
 		List<Map<String, Object>> retorno = this.createValueGuests(guests);
 		
@@ -81,12 +81,12 @@ public class HospedeController {
 		guests.stream().forEach(guest -> {
 			Map<String, Object> item = new HashMap<String, Object>();
 			item.put("hospede", guest);
-			List<HospedeValor> hospedeValor = hospedeValorRepository.findGuestValues(guest.getId());
+			List<HospedeValor> hospedeValor = hospedeValorService.findGuestValues(guest.getId());
 			if (!hospedeValor.isEmpty()) {
 				Double total = hospedeValor.stream().mapToDouble(i -> i.getValor()).sum();
 				Double lastAccommodation = hospedeValor.get(hospedeValor.size()-1).getValor();
 				item.put("total", total);
-				item.put("lastAccomodation", lastAccommodation);
+				item.put("last", lastAccommodation);
 			}
 			
 			retorno.add(item);
